@@ -58,3 +58,35 @@ export const deleteNote = async (req: Request, res: Response): Promise<void> => 
         res.status(400).send({ error: 'Error deleting note' });
     }
 };
+
+export const editNote = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const { id } = req.params; // Extract note ID from the request params
+        const { title, content } = req.body; // Extract title and content from the request body
+
+        // Find the note by ID
+        const note = await Note.findById(id);
+
+        if (!note) {
+            res.status(404).send({ error: 'Note not found' });
+            return;
+        }
+
+        // Update the note fields if they are provided
+        if (title) note.title = title;
+        if (content) note.content = content;
+
+        // Save the updated note
+        const updatedNote = await note.save();
+
+        // Send the updated note back to the client
+        res.status(200).send({
+            message: 'Note updated successfully',
+            note: updatedNote,
+        });
+    } catch (error) {
+        res.status(500).send({
+            error: 'An error occurred while updating the note',
+        });
+    }
+};
