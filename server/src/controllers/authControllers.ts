@@ -6,7 +6,7 @@ import bcrypt from "bcrypt";
 
 export const signUp = async (req: Request, res: Response): Promise<void> => {
     try {
-        const { email } = req.body;
+        const { email, dateOfBirth, fullName } = req.body;
 
         if (!email) {
             res.status(400).send({ error: "Email is required" });
@@ -24,6 +24,8 @@ export const signUp = async (req: Request, res: Response): Promise<void> => {
             { email },
             {
                 email,
+                fullName,
+                dateOfBirth,
                 otp: { code: hashedOtp, expiresAt: otpExpiry }
             },
             { upsert: true, new: true }
@@ -36,6 +38,51 @@ export const signUp = async (req: Request, res: Response): Promise<void> => {
         return;
     } catch (error) {
         res.status(400).send({ error: "Error creating user" });
+        return;
+    }
+};
+
+export const signIn = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const { email } = req.body;
+
+        if (!email) {
+            res.status(400).send({ error: "Email is required" });
+            return;
+        }
+
+        // Find user
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            res.status(401).send({ error: "User not found" });
+            return;
+        }
+
+        // Generate OTP
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        const otpExpiry = new Date();
+        otpExpiry.setMinutes(otpExpiry.getMinutes() + 10);
+
+        const hashedOtp = await bcrypt.hash(otp, 10);
+
+        // Update user with new OTP
+        user.otp = {
+            code: hashedOtp,
+            expiresAt: otpExpiry
+        };
+        await user.save();
+
+        // Send OTP
+        await sendOTP(email, otp);
+
+        res.status(200).send({ 
+            message: "OTP sent successfully",
+            email: user.email
+        });
+
+    } catch (error) {
+        res.status(500).send({ error: "Error initiating sign in" });
         return;
     }
 };
@@ -78,6 +125,60 @@ export const otpVerification = async (req: Request, res: Response): Promise<void
         res.status(200).send({ message: "OTP verified successfully", token });
     } catch (error) {
         res.status(400).send({ error: "Error verifying OTP" });
+        return;
+    }
+};
+
+export const verifySignIn = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const { email, otp } = req.body;
+
+        if (!email || !otp) {
+            res.status(400).send({ error: "Email and OTP are required" });
+            return;
+        }
+
+        const user = await User.findOne({ email });
+
+        if (!user || !user.otp?.code) {
+            res.status(401).send({ error: "Invalid or expired OTP" });
+            return;
+        }
+
+        const isOtpValid = await bcrypt.compare(otp, user.otp.code);
+
+        if (
+            !isOtpValid || 
+            !user.otp?.expiresAt || 
+            new Date(user.otp.expiresAt) < new Date()
+        ) {
+            res.status(401).send({ error: "Invalid or expired OTP" });
+            return;
+        }
+
+        // Clear OTP after successful verification
+        user.otp = undefined;
+        await user.save();
+
+        // Generate JWT token
+        const token = jwt.sign(
+            { userId: user._id }, 
+            process.env.JWT_SECRET || 'secret',
+            { expiresIn: "7d" }
+        );
+
+        res.status(200).send({
+            message: "Sign in successful",
+            token,
+            user: {
+                id: user._id,
+                email: user.email,
+                verified: user.verified
+            }
+        });
+
+    } catch (error) {
+        res.status(500).send({ error: "Error verifying signin" });
         return;
     }
 };
