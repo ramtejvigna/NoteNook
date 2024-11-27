@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import axios from "axios";
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from "react-router-dom";
-import { Trash2, LogOut, Plus, User, Mail, Calendar, Loader2 } from 'lucide-react';
+import { Trash2, LogOut, Plus, User, Mail, Calendar, Loader2, Edit2, Save, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -23,6 +23,11 @@ interface User {
 }
 
 const Notes = () => {
+    const [isEditing, setIsEditing] = useState(false);
+    const [editedName, setEditedName] = useState('');
+    const [editedEmail, setEditedEmail] = useState('');
+    const [editedDateOfBirth, setEditedDateOfBirth] = useState('');
+    const [isSaving, setIsSaving] = useState(false);
     const [userData, setUserData] = useState<User | null>(null);
     const [notes, setNotes] = useState<Note[]>([]);
     const [error, setError] = useState('');
@@ -56,6 +61,47 @@ const Notes = () => {
             fetchUserData();
         }
     }, [token, userId]);
+
+    useEffect(() => {
+        if (userData) {
+            setEditedName(userData.fullName);
+            setEditedEmail(userData.email);
+            setEditedDateOfBirth(new Date(userData.dateOfBirth).toISOString().split('T')[0]);
+        }
+    }, [userData]);
+
+    const handleSaveProfile = async () => {
+        try {
+            setIsSaving(true);
+            const response = await axios.put(
+                `http://localhost:3000/user/${userId}`,
+                {
+                    fullName: editedName,
+                    email: editedEmail,
+                    dateOfBirth: editedDateOfBirth
+                },
+                {
+                    headers: { Authorization: `Bearer ${token}` }
+                }
+            );
+            setUserData(response.data.user);
+            setIsEditing(false);
+            toast.success(response.data.message);
+        } catch (error) {
+            toast.error('Failed to update profile');
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
+    const handleCancelEdit = () => {
+        if (userData) {
+            setEditedName(userData.fullName);
+            setEditedEmail(userData.email);
+            setEditedDateOfBirth(new Date(userData.dateOfBirth).toISOString().split('T')[0]);
+        }
+        setIsEditing(false);
+    };
 
     const handleDeleteNote = async (id: string) => {
         try {
@@ -111,18 +157,18 @@ const Notes = () => {
     }
 
     return (
-        <motion.div 
+        <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="min-h-screen p-6 bg-gray-50"
         >
             <div className="max-w-6xl mx-auto">
-                <motion.div 
+                <motion.div
                     initial={{ y: -20 }}
                     animate={{ y: 0 }}
                     className="flex justify-between items-center mb-8"
                 >
-                    <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                    <h1 className="text-2xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                         NoteNook
                     </h1>
                     <motion.button
@@ -137,7 +183,7 @@ const Notes = () => {
                 </motion.div>
 
                 {error && (
-                    <motion.div 
+                    <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         className="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 rounded mb-6"
@@ -147,23 +193,87 @@ const Notes = () => {
                 )}
 
                 {userData && (
-                    <motion.div 
+                    <motion.div
                         initial={{ y: 20, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
-                        className="bg-white p-8 rounded-xl shadow-lg mb-8 transform hover:shadow-xl transition-shadow duration-300"
+                        className="bg-white p-8 rounded-xl shadow-lg mb-8"
                     >
+                        <div className="flex justify-between mb-6">
+                            <h2 className="text-2xl font-bold text-gray-800">Profile</h2>
+                            {!isEditing ? (
+                                <button
+                                    onClick={() => setIsEditing(true)}
+                                    className="flex float-right items-center gap-2 text-gray-600 hover:text-blue-600"
+                                >
+                                    <Edit2 className="w-5 h-5" />
+                                </button>
+                            ) : (
+                                <div className="flex gap-2">
+                                    <button
+                                        onClick={handleSaveProfile}
+                                        disabled={isSaving}
+                                        className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg"
+                                    >
+                                        {isSaving ? (
+                                            <Loader2 className="w-5 h-5 animate-spin" />
+                                        ) : (
+                                            <Save className="w-5 h-5" />
+                                        )}
+                                        <span>Save</span>
+                                    </button>
+                                    <button
+                                        onClick={handleCancelEdit}
+                                        disabled={isSaving}
+                                        className="flex items-center gap-2 text-gray-600 hover:text-red-600"
+                                    >
+                                        <X className="w-5 h-5" />
+                                        <span>Cancel</span>
+                                    </button>
+                                </div>
+                            )}
+                        </div>
+
                         <div className="flex flex-col gap-4">
                             <div className="flex items-center gap-3">
                                 <User className="w-6 h-6 text-blue-500" />
-                                <h2 className="text-2xl font-bold text-gray-800">{userData.fullName}</h2>
+                                {isEditing ? (
+                                    <input
+                                        type="text"
+                                        value={editedName}
+                                        onChange={(e) => setEditedName(e.target.value)}
+                                        className="w-full p-2 border rounded-lg"
+                                    />
+                                ) : (
+                                    <h2 className="text-2xl font-bold text-gray-800">{userData.fullName}</h2>
+                                )}
                             </div>
-                            <div className="flex items-center gap-3 text-gray-600">
-                                <Mail className="w-5 h-5" />
-                                <p>{userData.email}</p>
+                            <div className="flex items-center gap-3">
+                                <Mail className="w-5 h-5 text-gray-600" />
+                                {isEditing ? (
+                                    <input
+                                        type="email"
+                                        value={editedEmail}
+                                        onChange={(e) => setEditedEmail(e.target.value)}
+                                        className="w-full p-2 border rounded-lg"
+                                    />
+                                ) : (
+                                    <p className="text-gray-600">{userData.email}</p>
+                                )}
                             </div>
-                            <div className="flex items-center gap-3 text-gray-600">
-                                <Calendar className="w-5 h-5" />
-                                <p>{formattedDate.format(new Date(userData.dateOfBirth))}</p>
+                            <div className="flex items-center gap-3">
+                                <Calendar className="w-5 h-5 text-gray-600" />
+                                {isEditing ? (
+                                    <input
+                                        type="date"
+                                        value={editedDateOfBirth}
+                                        onChange={(e) => setEditedDateOfBirth(e.target.value)}
+                                        className="w-full p-2 border rounded-lg"
+                                    />
+                                ) : (
+                                    <p className="text-gray-600">
+                                        {formattedDate.format(new Date(userData.dateOfBirth))}
+                                    </p>
+                                )}
                             </div>
                         </div>
                     </motion.div>
@@ -179,7 +289,7 @@ const Notes = () => {
                     <span>Create New Note</span>
                 </motion.button>
 
-                <motion.div 
+                <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
@@ -219,7 +329,7 @@ const Notes = () => {
                                 </div>
                                 <p className="text-sm text-gray-500 flex items-center gap-2">
                                     <Calendar className="w-4 h-4" />
-                                    {new Date(note.createdAt).toLocaleDateString()}
+                                    {formattedDate.format(new Date(note.createdAt))}
                                 </p>
                             </motion.div>
                         ))}

@@ -39,21 +39,18 @@ const CreateNote = () => {
     };
 
     return (
-        <motion.div 
+        <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="min-h-screen p-6 bg-gray-50"
         >
             <div className="max-w-4xl mx-auto">
-                <motion.div 
+                <motion.div
                     initial={{ y: -20 }}
                     animate={{ y: 0 }}
-                    className="flex justify-between items-center mb-8"
+                    className="w-full mb-8"
                 >
-                    <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                        Create Note
-                    </h1>
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center justify-between gap-4">
                         <motion.button
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
@@ -63,6 +60,9 @@ const CreateNote = () => {
                             <ArrowLeft className="w-5 h-5" />
                             <span>Back</span>
                         </motion.button>
+                        <h1 className="text-2xl md:text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                            Create Note
+                        </h1>
                         <motion.button
                             whileHover={{ scale: 1.05 }}
                             whileTap={{ scale: 0.95 }}
@@ -70,7 +70,7 @@ const CreateNote = () => {
                             className="flex items-center gap-2 text-gray-600 hover:text-red-600 transition-colors duration-200"
                         >
                             <LogOut className="w-5 h-5" />
-                            <span>Sign Out</span>
+                            <span className='hidden md:block'>Sign Out</span>
                         </motion.button>
                     </div>
                 </motion.div>

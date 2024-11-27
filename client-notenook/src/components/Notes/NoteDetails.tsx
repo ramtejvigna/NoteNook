@@ -72,7 +72,7 @@ const NoteDetails = () => {
         <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="min-h-screen p-6 bg-gray-50"
+            className="min-h-screen p-6"
         >
             <div className="max-w-4xl mx-auto">
                 <div className="flex justify-between items-center mb-8">
