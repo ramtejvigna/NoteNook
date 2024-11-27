@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mail, KeyRound, ArrowRight, SendHorizontal, X } from 'lucide-react';
+import axios from 'axios';
 
 interface ToastProps {
     message: string;
@@ -89,18 +90,15 @@ const SignIn: React.FC = () => {
         setLoading(true);
 
         try {
-            const response = await fetch('http://localhost:3000/auth/verify-signin', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, otp }),
-            });
+            const response = await axios.post('http://localhost:3000/auth/verify-signin', { email, otp });
 
-            const data: ApiResponse = await response.json();
+            const data = response.data;
 
-            if (!response.ok) throw new Error(data.error);
+            if (data.error) throw new Error(data.error);
 
             showToast('Sign in successful! Redirecting...', 'success');
             localStorage.setItem('token', data.token || '');
+            localStorage.setItem('userId', data.user.id);
             setTimeout(() => {
                 window.location.href = '/notes';
             }, 1000);

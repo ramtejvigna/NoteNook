@@ -5,6 +5,7 @@ import cors from "cors";
 import cookieParser from "cookie-parser"
 import authRoutes from "./routes/auth";
 import noteRoutes from "./routes/noteRoutes"
+import userRoutes from "./routes/userRoutes"
 
 dotenv.config();
 
@@ -23,6 +24,7 @@ mongoose.connect(process.env.MONGO_URL || 'mongodb://localhost:27017/notes-app')
 
 app.use('/auth', authRoutes);
 app.use('/note', noteRoutes);
+app.use('/user', userRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

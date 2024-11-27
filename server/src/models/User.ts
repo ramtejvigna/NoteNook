@@ -22,6 +22,7 @@ const userSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    notes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Note' }]
 }, { timestamps: true })
 
 export default mongoose.model('User', userSchema);
