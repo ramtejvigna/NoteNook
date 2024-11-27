@@ -1,6 +1,7 @@
 import React from "react"
 import { Routes, BrowserRouter, Route, Navigate } from "react-router-dom"
 import { useAuth, AuthProvider } from "./context/AuthContext";
+import SignUp from "./components/SignUp";
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const token = useAuth();
@@ -13,7 +14,7 @@ function App() {
     <AuthProvider>
       <BrowserRouter>
         <Routes>
-          
+          <Route path="/" element={<SignUp />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

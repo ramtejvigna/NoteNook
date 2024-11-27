@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import cors from "cors";
 import authRoutes from "./routes/auth";
+import noteRoutes from "./routes/noteRoutes"
 
 dotenv.config();
 
@@ -18,8 +19,8 @@ mongoose.connect(process.env.MONGO_URL || 'mongodb://localhost:27017/notes-app')
     .then(() => console.log('MongoDB Connected...'))
     .catch((err) => console.log(err));
 
-app.use('/', authRoutes);
-// app.use('/note', noteRoutes);
+app.use('/auth', authRoutes);
+app.use('/note', noteRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
