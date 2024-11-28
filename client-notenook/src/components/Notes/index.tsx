@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { Trash2, LogOut, Plus, User, Mail, Calendar, Loader2, Edit2, Save, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
+import EmptyNotesState from './EmptyNoteState';
 
 interface Note {
     _id: string;
@@ -289,52 +290,56 @@ const Notes = () => {
                     <span>Create New Note</span>
                 </motion.button>
 
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-                >
-                    <AnimatePresence>
-                        {notes.map((note) => (
-                            <motion.div
-                                key={note._id}
-                                layout
-                                initial={{ opacity: 0, scale: 0.8 }}
-                                animate={{ opacity: 1, scale: 1 }}
-                                exit={{ opacity: 0, scale: 0.8 }}
-                                whileHover={{ y: -4 }}
-                                className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer"
-                                onClick={() => handleNoteClick(note)}
-                            >
-                                <div className="flex justify-between items-start mb-4">
-                                    <h2 className="text-xl font-bold text-gray-800 truncate pr-3">
-                                        {note.title}
-                                    </h2>
-                                    <motion.button
-                                        whileHover={{ scale: 1.1 }}
-                                        whileTap={{ scale: 0.9 }}
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            handleDeleteNote(note._id);
-                                        }}
-                                        className="text-gray-400 hover:text-red-500 transition-colors duration-200"
-                                        disabled={isDeletingId === note._id}
-                                    >
-                                        {isDeletingId === note._id ? (
-                                            <Loader2 className="w-5 h-5 animate-spin" />
-                                        ) : (
-                                            <Trash2 className="w-5 h-5" />
-                                        )}
-                                    </motion.button>
-                                </div>
-                                <p className="text-sm text-gray-500 flex items-center gap-2">
-                                    <Calendar className="w-4 h-4" />
-                                    {formattedDate.format(new Date(note.createdAt))}
-                                </p>
-                            </motion.div>
-                        ))}
-                    </AnimatePresence>
-                </motion.div>
+                {notes.length === 0 ? (
+                    <EmptyNotesState onCreateNote={handleCreateNote} />
+                ) : (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+                    >
+                        <AnimatePresence>
+                            {notes.map((note) => (
+                                <motion.div
+                                    key={note._id}
+                                    layout
+                                    initial={{ opacity: 0, scale: 0.8 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    exit={{ opacity: 0, scale: 0.8 }}
+                                    whileHover={{ y: -4 }}
+                                    className="bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition-all duration-300 cursor-pointer"
+                                    onClick={() => handleNoteClick(note)}
+                                >
+                                    <div className="flex justify-between items-start mb-4">
+                                        <h2 className="text-xl font-bold text-gray-800 truncate pr-3">
+                                            {note.title}
+                                        </h2>
+                                        <motion.button
+                                            whileHover={{ scale: 1.1 }}
+                                            whileTap={{ scale: 0.9 }}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                handleDeleteNote(note._id);
+                                            }}
+                                            className="text-gray-400 hover:text-red-500 transition-colors duration-200"
+                                            disabled={isDeletingId === note._id}
+                                        >
+                                            {isDeletingId === note._id ? (
+                                                <Loader2 className="w-5 h-5 animate-spin" />
+                                            ) : (
+                                                <Trash2 className="w-5 h-5" />
+                                            )}
+                                        </motion.button>
+                                    </div>
+                                    <p className="text-sm text-gray-500 flex items-center gap-2">
+                                        <Calendar className="w-4 h-4" />
+                                        {formattedDate.format(new Date(note.createdAt))}
+                                    </p>
+                                </motion.div>
+                            ))}
+                        </AnimatePresence>
+                    </motion.div>
+                )}
             </div>
         </motion.div>
     );

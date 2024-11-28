@@ -96,7 +96,7 @@ const CreateNote = () => {
                                 id="title"
                                 value={title}
                                 onChange={(e) => setTitle(e.target.value)}
-                                className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200"
+                                className="w-full px-4 py-3 border-none outline-none rounded-lg transition-all duration-200 resize-none h-auto"
                                 placeholder="Enter note title..."
                                 required
                             />
@@ -113,11 +113,17 @@ const CreateNote = () => {
                             <textarea
                                 id="content"
                                 value={content}
-                                onChange={(e) => setContent(e.target.value)}
-                                className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 h-48 resize-none"
+                                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setContent(e.target.value)}
+                                onInput={(e: React.FormEvent<HTMLTextAreaElement>) => {
+                                    const target = e.currentTarget;
+                                    target.style.height = 'auto'; // Reset height to auto
+                                    target.style.height = `${target.scrollHeight}px`; // Set height based on scrollHeight
+                                }}
+                                className="w-full px-4 py-3 border-none outline-none rounded-lg transition-all duration-200 resize-none h-auto"
                                 placeholder="Write your note content..."
                                 required
                             />
+
                         </motion.div>
 
                         <motion.div
