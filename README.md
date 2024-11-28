@@ -2,6 +2,10 @@
 
 A full-stack note-taking application built with React (TypeScript) and Node.js (Typescript), featuring email OTP authentication and JWT-based authorization.
 
+## Demo
+
+Check out the live demo: [Note Nook Demo](https://notenook-notes.netlify.app/)
+
 ## Features
 
 - User authentication via Email OTP
