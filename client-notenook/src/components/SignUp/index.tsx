@@ -1,6 +1,6 @@
 import React, { useState, ChangeEvent, FormEvent } from "react";
 import { useAuth } from "../../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Send, KeyRound, FileText, User, Calendar, Mail } from "lucide-react";
 import axios from "axios";
 
@@ -212,12 +212,12 @@ const SignUp: React.FC = () => {
                     <div className="px-8 py-4 bg-gray-50 border-t border-gray-100">
                         <p className="text-gray-600 text-center text-sm">
                             Already have an account?{" "}
-                            <a
-                                href="/signin"
+                            <Link
+                                to="signin"
                                 className="text-blue-600 hover:text-blue-700 font-medium transition-colors duration-300"
                             >
                                 Sign in
-                            </a>
+                            </Link>
                         </p>
                     </div>
                 </div>
