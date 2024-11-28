@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mail, KeyRound, ArrowRight, SendHorizontal, X } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 interface ToastProps {
@@ -45,6 +46,7 @@ const SignIn: React.FC = () => {
     const [loading, setLoading] = useState<boolean>(false);
     const [toast, setToast] = useState<ToastState | null>(null);
     const [countdown, setCountdown] = useState<number>(0);
+    const navigate = useNavigate();
 
     const showToast = (message: string, type: 'error' | 'success' = 'error'): void => {
         setToast({ message, type });
@@ -104,7 +106,7 @@ const SignIn: React.FC = () => {
             localStorage.setItem('token', data.token || '');
             localStorage.setItem('userId', data.user.id);
             setTimeout(() => {
-                window.location.href = '/notes';
+                navigate("/notes");
             }, 1000);
         } catch (err) {
             showToast(err instanceof Error ? err.message : 'An error occurred');
