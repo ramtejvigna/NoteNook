@@ -105,9 +105,7 @@ const SignIn: React.FC = () => {
             showToast('Sign in successful! Redirecting...', 'success');
             localStorage.setItem('token', data.token || '');
             localStorage.setItem('userId', data.user.id);
-            setTimeout(() => {
-                navigate("/notes");
-            }, 1000);
+            navigate("/notes");
         } catch (err) {
             showToast(err instanceof Error ? err.message : 'An error occurred');
         } finally {
