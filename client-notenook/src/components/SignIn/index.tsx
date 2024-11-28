@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Mail, KeyRound, ArrowRight, SendHorizontal, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { useAuth } from '../../context/AuthContext';
 
 interface ToastProps {
     message: string;
@@ -47,6 +48,7 @@ const SignIn: React.FC = () => {
     const [toast, setToast] = useState<ToastState | null>(null);
     const [countdown, setCountdown] = useState<number>(0);
     const navigate = useNavigate();
+    const { setToken } = useAuth();
 
     const showToast = (message: string, type: 'error' | 'success' = 'error'): void => {
         setToast({ message, type });
@@ -96,16 +98,28 @@ const SignIn: React.FC = () => {
         setLoading(true);
 
         try {
-            const response = await axios.post<ApiResponse>('https://notenook.onrender.com/auth/verify-signin', { email, otp });
+            const response = await axios.post<ApiResponse>(
+                'https://notenook.onrender.com/auth/verify-signin',
+                { email, otp }
+            );
 
             const data = response.data;
 
             if (data.error) throw new Error(data.error);
 
-            showToast('Sign in successful! Redirecting...', 'success');
+            // First update the auth context
+            setToken(data.token || '');
+            
+            // Then update localStorage
             localStorage.setItem('token', data.token || '');
             localStorage.setItem('userId', data.user.id);
-            navigate("/notes");
+
+            showToast('Sign in successful! Redirecting...', 'success');
+
+            // Add a small delay before navigation to ensure context is updated
+            setTimeout(() => {
+                navigate('/notes', { replace: true });
+            }, 100);
         } catch (err) {
             showToast(err instanceof Error ? err.message : 'An error occurred');
         } finally {

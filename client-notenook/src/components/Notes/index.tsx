@@ -71,6 +71,13 @@ const Notes = () => {
         }
     }, [userData]);
 
+    useEffect(() => {
+        if (!token) {
+            navigate('/', { replace: true });
+            return;
+        }
+    }, [token, navigate]);
+
     const handleSaveProfile = async () => {
         try {
             setIsSaving(true);
