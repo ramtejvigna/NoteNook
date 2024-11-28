@@ -101,7 +101,7 @@ npm run dev
 3. Start the frontend application:
 ```bash
 cd client-notenook
-npm start
+npm run dev
 ```
 
 The application will be available at `http://localhost:5173`
