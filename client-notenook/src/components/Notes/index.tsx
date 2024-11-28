@@ -129,6 +129,7 @@ const Notes = () => {
     const handleLogout = () => {
         toast.success('Logged out successfully!');
         setToken(null);
+        localStorage.removeItem('userId');
         navigate('/');
     };
 
