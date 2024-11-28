@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mail, KeyRound, ArrowRight, SendHorizontal, X } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
 interface ToastProps {
@@ -99,10 +99,10 @@ const SignIn: React.FC = () => {
         try {
             const response = await fetch(
                 'https://notenook.onrender.com/auth/verify-signin', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, otp }),
-                }
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, otp }),
+            }
             );
 
             const data: ApiResponse = await response.json();
@@ -111,7 +111,7 @@ const SignIn: React.FC = () => {
 
             // First update the auth context
             setToken(data.token || '');
-            
+
             // Then update localStorage
             localStorage.setItem('token', data.token || '');
             localStorage.setItem('userId', data.user.id);
@@ -267,6 +267,17 @@ const SignIn: React.FC = () => {
                                 </div>
                             </motion.form>
                         )}
+                        <div className="px-8 py-4">
+                            <p className="text-gray-600 text-center text-sm">
+                                Don't have an account?{" "}
+                                <Link
+                                    to="/"
+                                    className="text-blue-600 hover:text-blue-700 font-medium transition-colors duration-300"
+                                >
+                                    Sign Up
+                                </Link>
+                            </p>
+                        </div>
                     </AnimatePresence>
                 </div>
             </motion.div>
