@@ -108,7 +108,7 @@ const otpVerification = (req, res) => __awaiter(void 0, void 0, void 0, function
         const token = jsonwebtoken_1.default.sign({ userId: user._id }, process.env.JWT_SECRET || 'secret', {
             expiresIn: "7d"
         });
-        res.status(200).send({ message: "OTP verified successfully", token });
+        res.status(200).send({ message: "OTP verified successfully", token, userId: user._id });
     }
     catch (error) {
         res.status(400).send({ error: "Error verifying OTP" });

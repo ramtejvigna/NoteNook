@@ -122,7 +122,7 @@ export const otpVerification = async (req: Request, res: Response): Promise<void
             expiresIn: "7d"
         });
 
-        res.status(200).send({ message: "OTP verified successfully", token });
+        res.status(200).send({ message: "OTP verified successfully", token, userId: user._id });
     } catch (error) {
         res.status(400).send({ error: "Error verifying OTP" });
         return;

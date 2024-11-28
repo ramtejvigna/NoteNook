@@ -12,6 +12,7 @@ interface FormData {
 
 interface AuthResponse {
     token: string;
+    userId: string;
 }
 
 const SignUp: React.FC = () => {
@@ -60,6 +61,8 @@ const SignUp: React.FC = () => {
                 otp,
             });
             setToken(response.data.token);
+            localStorage.setItem('token', response.data.token || '');
+            localStorage.setItem('userId', response.data.userId);
             navigate("/notes");
         } catch (err) {
             setError("Invalid OTP. Please try again.");
