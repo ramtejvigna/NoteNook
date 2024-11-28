@@ -35,7 +35,10 @@ const NoteDetails = () => {
             setIsLoading(true); // Indicate that a request is in progress
     
             // Make a PUT request to update the note
-            const response = await axios.put(`http://localhost:3000/note/${note._id}`, {
+            const response = await axios.put<{
+                message: string;
+                note: Note;
+            }>(`http://localhost:3000/note/${note._id}`, {
                 title: editedTitle,
                 content: editedContent
             });

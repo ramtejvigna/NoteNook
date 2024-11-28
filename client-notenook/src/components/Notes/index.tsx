@@ -42,7 +42,7 @@ const Notes = () => {
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const response = await axios.get(`http://localhost:3000/user/${userId}`, {
+                const response = await axios.get<User>(`http://localhost:3000/user/${userId}`, {
                     headers: {
                         'Authorization': `Bearer ${token}`,
                     },
@@ -74,17 +74,23 @@ const Notes = () => {
     const handleSaveProfile = async () => {
         try {
             setIsSaving(true);
-            const response = await axios.put(
+    
+            const response = await axios.put<{
+                message: string;
+                user: User;
+            }>(
                 `http://localhost:3000/user/${userId}`,
                 {
                     fullName: editedName,
                     email: editedEmail,
-                    dateOfBirth: editedDateOfBirth
+                    dateOfBirth: editedDateOfBirth,
                 },
                 {
-                    headers: { Authorization: `Bearer ${token}` }
+                    headers: { Authorization: `Bearer ${token}` },
                 }
             );
+    
+            // Update state with the updated user data
             setUserData(response.data.user);
             setIsEditing(false);
             toast.success(response.data.message);
@@ -94,6 +100,7 @@ const Notes = () => {
             setIsSaving(false);
         }
     };
+    
 
     const handleCancelEdit = () => {
         if (userData) {
