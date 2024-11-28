@@ -21,6 +21,9 @@ app.use((0, cookie_parser_1.default)());
 mongoose_1.default.connect(process.env.MONGO_URL || 'mongodb://localhost:27017/notes-app')
     .then(() => console.log('MongoDB Connected...'))
     .catch((err) => console.log(err));
+app.get('/', () => {
+    console.log("Server running");
+});
 app.use('/auth', auth_1.default);
 app.use('/note', noteRoutes_1.default);
 app.use('/user', userRoutes_1.default);
