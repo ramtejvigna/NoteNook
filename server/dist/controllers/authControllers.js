@@ -24,24 +24,32 @@ const signUp = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             res.status(400).send({ error: "Email is required" });
             return;
         }
+        // Check if the user already exists
+        const existingUser = yield User_1.default.findOne({ email });
+        if (existingUser) {
+            res.status(400).send({ error: "Email already exists. Please use a different email." });
+            return;
+        }
         // Generate OTP
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
         const otpExpiry = new Date();
         otpExpiry.setMinutes(otpExpiry.getMinutes() + 10);
         const hashedOtp = yield bcrypt_1.default.hash(otp, 10);
-        const user = yield User_1.default.findOneAndUpdate({ email }, {
+        // Create a new user
+        const newUser = new User_1.default({
             email,
             fullName,
             dateOfBirth,
             otp: { code: hashedOtp, expiresAt: otpExpiry }
-        }, { upsert: true, new: true });
+        });
+        yield newUser.save();
         // Send OTP
-        (0, email_1.sendOTP)(user.email, otp);
+        (0, email_1.sendOTP)(newUser.email, otp);
         res.status(200).send({ message: "OTP sent successfully" });
         return;
     }
     catch (error) {
-        res.status(400).send({ error: "Error creating user" });
+        res.status(400).send({ error: "Failed to send OTP and create user. Try again" });
         return;
     }
 });

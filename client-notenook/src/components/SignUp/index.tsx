@@ -39,17 +39,18 @@ const SignUp: React.FC = () => {
     const handleSendOTP = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
         e.preventDefault();
         setLoading(true);
-
+    
         try {
             await axios.post("https://notenook.onrender.com/auth/signup", formData);
             setOtpSent(true);
-            setError("");
-        } catch (err) {
-            setError("Failed to send OTP. Please try again.");
+            setError(""); // Reset error on success
+        } catch (err: any) {
+            setError(err.response?.data?.error || "An unexpected error occurred.");
         }
-
+    
         setLoading(false);
     };
+    
 
     const handleVerifyOTP = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
         e.preventDefault();
@@ -61,6 +62,7 @@ const SignUp: React.FC = () => {
                 otp,
             });
             setToken(response.data.token);
+            console.log(response.data)
             localStorage.setItem('token', response.data.token || '');
             localStorage.setItem('userId', response.data.userId);
             navigate("/notes");

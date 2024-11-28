@@ -13,6 +13,13 @@ export const signUp = async (req: Request, res: Response): Promise<void> => {
             return;
         }
 
+        // Check if the user already exists
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            res.status(400).send({ error: "Email already exists. Please use a different email." });
+            return;
+        }
+
         // Generate OTP
         const otp = Math.floor(100000 + Math.random() * 900000).toString();
         const otpExpiry = new Date();
@@ -20,24 +27,23 @@ export const signUp = async (req: Request, res: Response): Promise<void> => {
 
         const hashedOtp = await bcrypt.hash(otp, 10);
 
-        const user: { email : string, verified: boolean } = await User.findOneAndUpdate(
-            { email },
-            {
-                email,
-                fullName,
-                dateOfBirth,
-                otp: { code: hashedOtp, expiresAt: otpExpiry }
-            },
-            { upsert: true, new: true }
-        );
+        // Create a new user
+        const newUser = new User({
+            email,
+            fullName,
+            dateOfBirth,
+            otp: { code: hashedOtp, expiresAt: otpExpiry }
+        });
+
+        await newUser.save();
 
         // Send OTP
-        sendOTP(user.email, otp);
+        sendOTP(newUser.email, otp);
 
         res.status(200).send({ message: "OTP sent successfully" });
         return;
     } catch (error) {
-        res.status(400).send({ error: "Error creating user" });
+        res.status(400).send({ error: "Failed to send OTP and create user. Try again" });
         return;
     }
 };
