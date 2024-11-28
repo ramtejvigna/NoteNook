@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mail, KeyRound, ArrowRight, SendHorizontal, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
 
 interface ToastProps {
@@ -98,14 +97,17 @@ const SignIn: React.FC = () => {
         setLoading(true);
 
         try {
-            const response = await axios.post<ApiResponse>(
-                'https://notenook.onrender.com/auth/verify-signin',
-                { email, otp }
+            const response = await fetch(
+                'https://notenook.onrender.com/auth/verify-signin', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, otp }),
+                }
             );
 
-            const data = response.data;
+            const data: ApiResponse = await response.json();
 
-            if (data.error) throw new Error(data.error);
+            if (!response.ok) throw new Error(data.error);
 
             // First update the auth context
             setToken(data.token || '');
