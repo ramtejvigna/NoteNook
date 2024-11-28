@@ -22,6 +22,9 @@ mongoose.connect(process.env.MONGO_URL || 'mongodb://localhost:27017/notes-app')
     .then(() => console.log('MongoDB Connected...'))
     .catch((err) => console.log(err));
 
+app.get('/', () => {
+    console.log("Server running");
+})
 app.use('/auth', authRoutes);
 app.use('/note', noteRoutes);
 app.use('/user', userRoutes);
