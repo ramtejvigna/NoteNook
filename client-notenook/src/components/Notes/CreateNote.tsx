@@ -19,7 +19,7 @@ const CreateNote = () => {
         setIsSubmitting(true);
         try {
             await axios.post(
-                'http://localhost:3000/note/createNote',
+                'https://notenook.onrender.com/note/createNote',
                 { title, content, userId },
                 { headers: { Authorization: `Bearer ${token}` } }
             );

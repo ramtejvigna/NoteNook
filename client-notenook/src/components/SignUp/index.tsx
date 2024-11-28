@@ -40,7 +40,7 @@ const SignUp: React.FC = () => {
         setLoading(true);
 
         try {
-            await axios.post("http://localhost:3000/auth/signup", formData);
+            await axios.post("https://notenook.onrender.com/auth/signup", formData);
             setOtpSent(true);
             setError("");
         } catch (err) {
@@ -55,7 +55,7 @@ const SignUp: React.FC = () => {
         setLoading(true);
 
         try {
-            const response = await axios.post<AuthResponse>("http://localhost:3000/auth/verify-otp", {
+            const response = await axios.post<AuthResponse>("https://notenook.onrender.com/auth/verify-otp", {
                 email: formData.email,
                 otp,
             });

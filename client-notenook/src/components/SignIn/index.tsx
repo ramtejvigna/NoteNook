@@ -69,7 +69,7 @@ const SignIn: React.FC = () => {
         setLoading(true);
 
         try {
-            const response = await fetch('http://localhost:3000/auth/signin', {
+            const response = await fetch('https://notenook.onrender.com/auth/signin', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email }),
@@ -94,7 +94,7 @@ const SignIn: React.FC = () => {
         setLoading(true);
 
         try {
-            const response = await axios.post<ApiResponse>('http://localhost:3000/auth/verify-signin', { email, otp });
+            const response = await axios.post<ApiResponse>('https://notenook.onrender.com/auth/verify-signin', { email, otp });
 
             const data = response.data;
 

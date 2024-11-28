@@ -38,7 +38,7 @@ const NoteDetails = () => {
             const response = await axios.put<{
                 message: string;
                 note: Note;
-            }>(`http://localhost:3000/note/${note._id}`, {
+            }>(`https://notenook.onrender.com/note/${note._id}`, {
                 title: editedTitle,
                 content: editedContent
             });

@@ -42,7 +42,7 @@ const Notes = () => {
     useEffect(() => {
         const fetchUserData = async () => {
             try {
-                const response = await axios.get<User>(`http://localhost:3000/user/${userId}`, {
+                const response = await axios.get<User>(`https://notenook.onrender.com/user/${userId}`, {
                     headers: {
                         'Authorization': `Bearer ${token}`,
                     },
@@ -79,7 +79,7 @@ const Notes = () => {
                 message: string;
                 user: User;
             }>(
-                `http://localhost:3000/user/${userId}`,
+                `https://notenook.onrender.com/user/${userId}`,
                 {
                     fullName: editedName,
                     email: editedEmail,
@@ -114,7 +114,7 @@ const Notes = () => {
     const handleDeleteNote = async (id: string) => {
         try {
             setIsDeletingId(id);
-            await axios.delete(`http://localhost:3000/note/${id}`, {
+            await axios.delete(`https://notenook.onrender.com/note/${id}`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             setNotes((prevNotes) => prevNotes.filter((note) => note._id !== id));
