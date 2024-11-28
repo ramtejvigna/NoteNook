@@ -2,11 +2,7 @@ import React from 'react';
 import { motion, Variants } from 'framer-motion';
 import { StickyNote } from 'lucide-react';
 
-interface EmptyNotesStateProps {
-    onCreateNote: () => void;
-}
-
-const EmptyNotesState: React.FC<EmptyNotesStateProps> = ({ onCreateNote }) => {
+const EmptyNotesState = () => {
     const containerVariants: Variants = {
         hidden: { opacity: 0, y: 20 },
         visible: {

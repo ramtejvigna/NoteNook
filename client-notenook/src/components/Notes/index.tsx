@@ -291,7 +291,7 @@ const Notes = () => {
                 </motion.button>
 
                 {notes.length === 0 ? (
-                    <EmptyNotesState onCreateNote={handleCreateNote} />
+                    <EmptyNotesState />
                 ) : (
                     <motion.div
                         initial={{ opacity: 0 }}
