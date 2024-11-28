@@ -12,6 +12,10 @@ interface ToastProps {
 interface ApiResponse {
     error?: string;
     token?: string;
+    user: {
+        id: string;
+        [key: string]: any; // Adjust as per user object structure
+    };
 }
 
 const Toast: React.FC<ToastProps> = ({ message, type, onClose }) => (
@@ -90,7 +94,7 @@ const SignIn: React.FC = () => {
         setLoading(true);
 
         try {
-            const response = await axios.post('http://localhost:3000/auth/verify-signin', { email, otp });
+            const response = await axios.post<ApiResponse>('http://localhost:3000/auth/verify-signin', { email, otp });
 
             const data = response.data;
 
