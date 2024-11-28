@@ -4,7 +4,7 @@ import { editProfile, getUserData } from "../controllers/userControllers";
 
 const router = express.Router();
 
-router.get('/:id', getUserData);
-router.put('/:id', editProfile);
+router.get('/:id', auth, getUserData);
+router.put('/:id', auth, editProfile);
 
 export default router;

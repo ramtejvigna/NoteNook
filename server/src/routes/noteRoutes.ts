@@ -5,8 +5,8 @@ import { createNote, deleteNote, editNote, getNotes } from "../controllers/noteC
 const router = express.Router();
 
 router.post('/createNote', auth, createNote);
-router.get('/:userId', getNotes);
-router.delete('/:id', deleteNote);
-router.put('/:id', editNote)
+router.get('/:userId', auth, getNotes);
+router.delete('/:id', auth, deleteNote);
+router.put('/:id', auth, editNote)
 
 export default router;
