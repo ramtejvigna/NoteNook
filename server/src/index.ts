@@ -12,7 +12,9 @@ dotenv.config();
 const app = express();
 
 // Middlewares
-app.use(cors());
+app.use(cors({
+    origin: ["https://notenook-notes.netlify.app"],
+}));
 app.use(express.json());
 app.use(cookieParser());
 
